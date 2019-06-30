@@ -1,5 +1,10 @@
 package com.mine.mytensorflow.mobilenet
 
+import android.app.Activity
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collections
 
@@ -7,7 +12,7 @@ import java.util.Collections
  * The most of those information can be found in GTSRB_TensorFlow_MobileNet.ipynb
  */
 object MobilenetModelConfig {
-    var MODEL_FILENAME = "gtsrb_model.lite"
+    var MODEL_FILENAME = "g_model.lite"
 
     val INPUT_IMG_SIZE_WIDTH = 224
     val INPUT_IMG_SIZE_HEIGHT = 224
@@ -65,6 +70,19 @@ object MobilenetModelConfig {
             "lifted_no_overtaking_trucks"
         )
     )
+
+
+    @Throws(IOException::class)
+    private fun loadLabelList(activity: Activity, path:String): List<String> {
+        val labels = ArrayList<String>()
+        val reader = BufferedReader(InputStreamReader(activity.assets.open(path)))
+
+        while ( reader.readLine() != null) {
+            labels.add(reader.readLine())
+        }
+        reader.close()
+        return labels
+    }
 
     val MAX_CLASSIFICATION_RESULTS = 3
     val CLASSIFICATION_THRESHOLD = 0.1f
