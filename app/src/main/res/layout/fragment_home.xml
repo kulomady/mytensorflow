@@ -4,11 +4,20 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context=".HomeFragment">
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Home"/>
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:src="@drawable/ic_home_black_24dp"/>
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:text="Halaman Home"/>
+    </LinearLayout>
 
 </FrameLayout>
