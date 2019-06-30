@@ -5,6 +5,9 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import android.support.v4.app.Fragment
+import android.content.Intent
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -46,5 +49,10 @@ class MainActivity : AppCompatActivity() {
             return true
         }
         return false
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }
