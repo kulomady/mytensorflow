@@ -1,18 +1,20 @@
 package com.mine.mytensorflow
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import android.support.v4.app.Fragment
 import android.content.Intent
-
-
+import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var textMessage: TextView
+    val gotoClassification = 1200
+
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
 
         when (item.itemId) {
@@ -20,11 +22,12 @@ class MainActivity : AppCompatActivity() {
                 loadFragment(HomeFragment())
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_dashboard -> {
-                loadFragment(ClassificationFragment())
-                return@OnNavigationItemSelectedListener true
+            R.id.navigation_classification -> {
+                startActivityForResult(Intent(this, ClassificationActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION), gotoClassification)
+                return@OnNavigationItemSelectedListener false
             }
-            R.id.navigation_notifications -> {
+            R.id.navigation_about -> {
                 loadFragment(AboutFragment())
                 return@OnNavigationItemSelectedListener true
             }
@@ -54,5 +57,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == gotoClassification) {
+            if (resultCode == Activity.RESULT_OK) {
+                data?.let {
+                    val pos = it.getIntExtra("pos", 0)
+                    when(pos){
+                        0 -> nav_view.selectedItemId = R.id.navigation_home
+                        2 -> nav_view.selectedItemId = R.id.navigation_about
+                    }
+                }
+
+            }
+        }
     }
 }
