@@ -12,6 +12,8 @@ import android.widget.Toast
 import com.mine.mytensorflow.mnist.ImageUtils
 import com.mine.mytensorflow.mnist.MnistClassifier
 import com.mine.mytensorflow.mnist.MnistModelConfig
+import com.mine.mytensorflow.mobilenet.MobilenetClassifier
+import com.mine.mytensorflow.mobilenet.MobilenetModelConfig
 import kotlinx.android.synthetic.main.activity_classification.*
 import java.io.IOException
 
@@ -19,6 +21,7 @@ import java.io.IOException
 class ClassificationActivity : AppCompatActivity() {
 
     private var mnistClassifier: MnistClassifier? = null
+    private var mobilenetClassifier:MobilenetClassifier? = null
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
 
@@ -49,6 +52,7 @@ class ClassificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_classification)
         loadMnistClassifier()
+        loadMobilenetClassifier()
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.selectedItemId = R.id.navigation_classification
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
@@ -100,15 +104,30 @@ class ClassificationActivity : AppCompatActivity() {
 
     }
 
+    private fun loadMobilenetClassifier() {
+        try {
+            mobilenetClassifier = MobilenetClassifier.classifier(assets, MobilenetModelConfig.MODEL_FILENAME)
+        } catch (e: IOException) {
+            Toast.makeText(this, "mobilenet model couldn't be loaded. Check logs for details.", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+
+    }
+
     private fun onImageCaptured(picture: ByteArray) {
         val bitmap = BitmapFactory.decodeByteArray(picture, 0, picture.size)
         val squareBitmap = ThumbnailUtils.extractThumbnail(bitmap, getScreenWidth(), getScreenWidth())
         ivPreview.setImageBitmap(squareBitmap)
 
-        val preprocessedImage = ImageUtils.prepareImageForClassification(squareBitmap)
-//        ivFinalPreview.setImageBitmap(preprocessedImage)
+//        val preprocessedImage = ImageUtils.prepareImageForClassification(squareBitmap)
+//
+//        mnistClassifier?.let {
+//            val recognitions = it.recognizeImage(preprocessedImage)
+//            tvClassification.setText(recognitions.toString())
+//        }
 
-        mnistClassifier?.let {
+        val preprocessedImage = ImageUtils.prepareImageForClassificationMobilenet(squareBitmap)
+        mobilenetClassifier?.let {
             val recognitions = it.recognizeImage(preprocessedImage)
             tvClassification.setText(recognitions.toString())
         }

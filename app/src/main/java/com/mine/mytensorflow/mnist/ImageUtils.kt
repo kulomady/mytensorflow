@@ -1,6 +1,9 @@
 package com.mine.mytensorflow.mnist
 
 import android.graphics.*
+import android.graphics.Bitmap
+import com.mine.mytensorflow.mobilenet.MobilenetModelConfig
+
 
 object ImageUtils {
 
@@ -36,6 +39,19 @@ object ImageUtils {
         val canvas = Canvas(bmpGrayscale)
         canvas.drawBitmap(bmpGrayscale, 0f, 0f, paint)
         return bmpGrayscale
+    }
+
+    fun prepareImageForClassificationMobilenet(bitmap: Bitmap): Bitmap {
+        val paint = Paint()
+        val finalBitmap = Bitmap.createScaledBitmap(
+            bitmap,
+            MobilenetModelConfig.INPUT_IMG_SIZE_WIDTH,
+            MobilenetModelConfig.INPUT_IMG_SIZE_HEIGHT,
+            false
+        )
+        val canvas = Canvas(finalBitmap)
+        canvas.drawBitmap(finalBitmap, 0f, 0f, paint)
+        return finalBitmap
     }
 
 }
