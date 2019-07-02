@@ -16,6 +16,10 @@ import com.mine.mytensorflow.mobilenet.MobilenetClassifier
 import com.mine.mytensorflow.mobilenet.MobilenetModelConfig
 import kotlinx.android.synthetic.main.activity_classification.*
 import java.io.IOException
+import java.util.*
+import android.text.format.DateUtils
+
+
 
 
 class ClassificationActivity : AppCompatActivity() {
@@ -125,11 +129,25 @@ class ClassificationActivity : AppCompatActivity() {
 //            val recognitions = it.recognizeImage(preprocessedImage)
 //            tvClassification.setText(recognitions.toString())
 //        }
+        if(options.selectedItem == "Mobilenet") {
+            val startTime = System.currentTimeMillis()
+            val preprocessedImage = ImageUtils.prepareImageForClassificationMobilenet(squareBitmap)
+            mobilenetClassifier?.let {
+                val recognitions = it.recognizeImage(preprocessedImage)
+                val endTime = System.currentTimeMillis()
+                val difference = endTime - startTime
+                val differenceInSeconds = difference / DateUtils.SECOND_IN_MILLIS
+                val timeFormatted = DateUtils.formatElapsedTime(differenceInSeconds)
+                var hasil = "hasil : \n"
+                recognitions.forEach {
+                    hasil = hasil + it.title + " confident \n" + it.confidence + "\n"
+                }
 
-        val preprocessedImage = ImageUtils.prepareImageForClassificationMobilenet(squareBitmap)
-        mobilenetClassifier?.let {
-            val recognitions = it.recognizeImage(preprocessedImage)
-            tvClassification.setText(recognitions.toString())
+                val output = recognitions.toString() + "waktu : " + difference
+                tvClassification.text = output
+            }
+        }else {
+            Toast.makeText(this, "Inception", Toast.LENGTH_SHORT).show()
         }
 
     }

@@ -80,6 +80,6 @@ object MobilenetModelConfig {
         return labels
     }
 
-    val MAX_CLASSIFICATION_RESULTS = 3
+    val MAX_CLASSIFICATION_RESULTS = 1
     val CLASSIFICATION_THRESHOLD = 0.1f
 }

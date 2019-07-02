@@ -5,10 +5,8 @@
     <string name="title_notifications">About</string>
 
     <string-array name="options_array">
-        <item>Pilihan 1</item>
-        <item>Pilihan 2</item>
-        <item>Pilihan 3</item>
-        <item>Pilihan 4</item>
+        <item>Mobilenet</item>
+        <item>Inception</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
