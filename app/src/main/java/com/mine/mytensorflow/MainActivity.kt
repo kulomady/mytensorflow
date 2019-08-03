@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import android.support.v4.app.Fragment
 import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -14,6 +16,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     val gotoClassification = 1200
+    val gotoClassificationGalley = 1201
+    private val SELECT_PICTURE = 100
+    private var filepath: Uri? = null
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
 
@@ -30,6 +35,10 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_about -> {
                 loadFragment(AboutFragment())
                 return@OnNavigationItemSelectedListener true
+            }
+            R.id.navigation_gallery -> {
+               pickFromGallery()
+                return@OnNavigationItemSelectedListener false
             }
         }
         false
@@ -54,6 +63,15 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
+    private fun pickFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        val mimeTypes = arrayOf("image/jpeg", "image/png")
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+        startActivityForResult(intent, SELECT_PICTURE)
+
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -64,9 +82,18 @@ class MainActivity : AppCompatActivity() {
                     when(pos){
                         0 -> nav_view.selectedItemId = R.id.navigation_home
                         2 -> nav_view.selectedItemId = R.id.navigation_about
+                        1 -> nav_view.selectedItemId = R.id.navigation_gallery
                     }
                 }
 
+            }
+        } else if(requestCode == SELECT_PICTURE){
+            data?.data.let {
+            filepath = it
+            Log.d("Mainactivity", it.toString())
+            val intent = Intent(this, GalleryClassificationActivity::class.java)
+            intent.putExtra("filepath", filepath?.toString())
+            startActivityForResult(intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION), gotoClassificationGalley)
             }
         }
     }

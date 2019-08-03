@@ -134,13 +134,6 @@ class ClassificationActivity : AppCompatActivity() {
         val bitmap = BitmapFactory.decodeByteArray(picture, 0, picture.size)
         val squareBitmap = ThumbnailUtils.extractThumbnail(bitmap, getScreenWidth(), getScreenWidth())
         ivPreview.setImageBitmap(squareBitmap)
-
-//        val preprocessedImage = ImageUtils.prepareImageForClassification(squareBitmap)
-//
-//        mnistClassifier?.let {
-//            val recognitions = it.recognizeImage(preprocessedImage)
-//            tvClassification.setText(recognitions.toString())
-//        }
         if (options.selectedItem == "Mobilenet") {
             val startTime = System.currentTimeMillis()
             val preprocessedImage = ImageUtils.prepareImageForClassificationMobilenet(squareBitmap)
@@ -174,7 +167,6 @@ class ClassificationActivity : AppCompatActivity() {
 
                 val output = recognitions.toString() + "waktu : " + difference
                 tvClassification.text = output
-//            Toast.makeText(this, "Inception", Toast.LENGTH_SHORT).show()
             }
 
         }
