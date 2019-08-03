@@ -2,6 +2,7 @@ package com.mine.mytensorflow.mnist
 
 import android.graphics.*
 import android.graphics.Bitmap
+import com.mine.mytensorflow.inception.InceptionConfig
 import com.mine.mytensorflow.mobilenet.MobilenetModelConfig
 
 
@@ -47,6 +48,19 @@ object ImageUtils {
             bitmap,
             MobilenetModelConfig.INPUT_IMG_SIZE_WIDTH,
             MobilenetModelConfig.INPUT_IMG_SIZE_HEIGHT,
+            false
+        )
+        val canvas = Canvas(finalBitmap)
+        canvas.drawBitmap(finalBitmap, 0f, 0f, paint)
+        return finalBitmap
+    }
+
+    fun prepareImageForClassificationInception(bitmap: Bitmap): Bitmap {
+        val paint = Paint()
+        val finalBitmap = Bitmap.createScaledBitmap(
+            bitmap,
+            InceptionConfig.INPUT_IMG_SIZE_WIDTH,
+            InceptionConfig.INPUT_IMG_SIZE_HEIGHT,
             false
         )
         val canvas = Canvas(finalBitmap)

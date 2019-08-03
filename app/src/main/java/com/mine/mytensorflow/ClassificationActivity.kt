@@ -18,14 +18,15 @@ import kotlinx.android.synthetic.main.activity_classification.*
 import java.io.IOException
 import java.util.*
 import android.text.format.DateUtils
-
-
+import com.mine.mytensorflow.inception.InceptionClassifier
+import com.mine.mytensorflow.inception.InceptionConfig
 
 
 class ClassificationActivity : AppCompatActivity() {
 
     private var mnistClassifier: MnistClassifier? = null
     private var mobilenetClassifier:MobilenetClassifier? = null
+    private var inceptionClassifier:InceptionClassifier? = null
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
 
@@ -57,6 +58,7 @@ class ClassificationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_classification)
         loadMnistClassifier()
         loadMobilenetClassifier()
+        loadInceptionClassifier()
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.selectedItemId = R.id.navigation_classification
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
@@ -118,6 +120,16 @@ class ClassificationActivity : AppCompatActivity() {
 
     }
 
+    private fun loadInceptionClassifier() {
+        try {
+            inceptionClassifier = InceptionClassifier.classifier(assets, InceptionConfig.MODEL_FILENAME)
+        } catch (e: IOException) {
+            Toast.makeText(this, "Inception model couldn't be loaded. Check logs for details.", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+
+    }
+
     private fun onImageCaptured(picture: ByteArray) {
         val bitmap = BitmapFactory.decodeByteArray(picture, 0, picture.size)
         val squareBitmap = ThumbnailUtils.extractThumbnail(bitmap, getScreenWidth(), getScreenWidth())
@@ -129,7 +141,7 @@ class ClassificationActivity : AppCompatActivity() {
 //            val recognitions = it.recognizeImage(preprocessedImage)
 //            tvClassification.setText(recognitions.toString())
 //        }
-        if(options.selectedItem == "Mobilenet") {
+        if (options.selectedItem == "Mobilenet") {
             val startTime = System.currentTimeMillis()
             val preprocessedImage = ImageUtils.prepareImageForClassificationMobilenet(squareBitmap)
             mobilenetClassifier?.let {
@@ -146,10 +158,26 @@ class ClassificationActivity : AppCompatActivity() {
                 val output = recognitions.toString() + "waktu : " + difference
                 tvClassification.text = output
             }
-        }else {
-            Toast.makeText(this, "Inception", Toast.LENGTH_SHORT).show()
-        }
+        } else {
+            val startTime = System.currentTimeMillis()
+            val preprocessedImage = ImageUtils.prepareImageForClassificationInception(squareBitmap)
+            inceptionClassifier?.let {
+                val recognitions = it.recognizeImage(preprocessedImage)
+                val endTime = System.currentTimeMillis()
+                val difference = endTime - startTime
+                val differenceInSeconds = difference / DateUtils.SECOND_IN_MILLIS
+                val timeFormatted = DateUtils.formatElapsedTime(differenceInSeconds)
+                var hasil = "hasil : \n"
+                recognitions.forEach {
+                    hasil = hasil + it.title + " confident \n" + it.confidence + "\n"
+                }
 
+                val output = recognitions.toString() + "waktu : " + difference
+                tvClassification.text = output
+//            Toast.makeText(this, "Inception", Toast.LENGTH_SHORT).show()
+            }
+
+        }
     }
 
     private fun getScreenWidth(): Int {
