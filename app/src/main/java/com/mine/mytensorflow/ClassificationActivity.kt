@@ -7,6 +7,7 @@ import android.support.design.widget.BottomNavigationView
 import android.app.Activity
 import android.graphics.BitmapFactory
 import android.media.ThumbnailUtils
+import android.os.Environment
 import android.util.DisplayMetrics
 import android.widget.Toast
 import com.mine.mytensorflow.mnist.ImageUtils
@@ -16,10 +17,20 @@ import com.mine.mytensorflow.mobilenet.MobilenetClassifier
 import com.mine.mytensorflow.mobilenet.MobilenetModelConfig
 import kotlinx.android.synthetic.main.activity_classification.*
 import java.io.IOException
-import java.util.*
 import android.text.format.DateUtils
 import com.mine.mytensorflow.inception.InceptionClassifier
 import com.mine.mytensorflow.inception.InceptionConfig
+import android.os.Environment.getExternalStorageDirectory
+import java.io.File
+import java.io.FileOutputStream
+import android.os.Environment.DIRECTORY_PICTURES
+import android.os.Environment.getExternalStoragePublicDirectory
+import android.R.attr.bitmap
+import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class ClassificationActivity : AppCompatActivity() {
@@ -131,7 +142,9 @@ class ClassificationActivity : AppCompatActivity() {
     }
 
     private fun onImageCaptured(picture: ByteArray) {
+
         val bitmap = BitmapFactory.decodeByteArray(picture, 0, picture.size)
+        saveImageCapture(bitmap)
         val squareBitmap = ThumbnailUtils.extractThumbnail(bitmap, getScreenWidth(), getScreenWidth())
         ivPreview.setImageBitmap(squareBitmap)
         if (options.selectedItem == "Mobilenet") {
@@ -176,5 +189,16 @@ class ClassificationActivity : AppCompatActivity() {
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.widthPixels
+    }
+
+    private fun saveImageCapture(capturedImage: Bitmap) {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        MediaStore.Images.Media.insertImage(
+            contentResolver,
+            capturedImage,
+            "mobileNet" + timeStamp,
+            "Image of mobilenet"
+        )
+
     }
 }
